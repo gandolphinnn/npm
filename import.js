@@ -28,11 +28,19 @@
 		max = Math.floor(max);
 		return Math.floor(Math.random() * (max - 1));
 	}
+	function last(arr) {
+		if (!Array.isArray(arr)) {
+			return false;
+		}
+		return arr[arr.length-1];
+	}
+	function cosD(degr) {
+		return Math.cos(formA(degr, 'rad'));
+	}
+	function sinD(degr) {
+		return Math.sin(formA(degr, 'rad'));
+	}
 //* graphics
-	let canvas = document.querySelector("canvas");
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	let ctx = canvas.getContext("2d");
 	class Coord {
 		constructor(x, y) {
 			this.x = x;
@@ -50,44 +58,114 @@
 			return Math.sqrt((this.x + coord.x) ** 2 + (this.y + coord.y )** 2);
 		}
 	}
-	function sumCoord(coord1, coord2) {
+	function sum2Coord(coord1, coord2) {
 		return new Coord(coord1.x + coord2.x, coord1.y + coord2.y);
+	}
+	function sumCoordVal(coord1, x, y) {
+		return new Coord(coord1.x + x, coord1.y + y);
 	}
 	function dist(coord1, coord2) {
 		return Math.sqrt(((coord1.x - coord2.x) ** 2) + ((coord1.y - coord2.y) ** 2));
 	}
-	function circle(coord, radius) {
+	let canvas = document.querySelector("canvas");
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	const cnv = {
+		w: canvas.width,
+		h: canvas.height,
+		c: new Coord(canvas.width/2, canvas.height/2)
+	}
+	let ctx = canvas.getContext("2d");
+	function circleS(coord, radius) {
+		ctx.beginPath();
+		ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
+		ctx.stroke();
+	}
+	function rectS(coord, width, length) { //? rect with lines parallel to screen
+		ctx.beginPath();
+		ctx.rect(coord.x, coord.y, width, length);
+		ctx.stroke();
+	}
+	function circleF(coord, radius) {
 		ctx.beginPath();
 		ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
 		ctx.fill();
 	}
+	function rectF(coord, width, length) { //? rect with lines parallel to screen
+		ctx.beginPath();
+		ctx.rect(coord.x, coord.y, width, length);
+		ctx.fill();
+	}
+	function line(coord1, coord2) {
+		ctx.beginPath();
+		ctx.moveTo(coord1.x, coord1.y);
+		ctx.lineTo(coord2.x, coord2.y);
+		ctx.stroke();
+	}
+	function showUnits(unit = 0) {
+		ctx.clearRect(0,0, innerWidth, innerHeight);
+		let lineL = [1, 5, 10, 50, 100, 250, 500, 1000];
+		if (unit > 0 && unit < cnv.w && !lineL.includes(unit)) {
+			lineL.push(unit);
+			lineL.sort(function(a, b) {
+				return a - b;
+			});
+		}
+		let coord = new Coord(cnv.c.x-500, cnv.c.y-(20*lineL.length/2));
+		ctx.lineWidth = 4;
+		lineL.forEach(l => {
+			if (l == unit) {
+				ctx.strokeStyle = 'red';
+			}
+			else {
+				ctx.strokeStyle = 'black';
+			}
+			line(coord, sumCoordVal(coord, l, 0));
+			coord.add(0, 20);
+		});
+	}
+//* rigidbodies
 	class RigidRect {
-		constructor(coord, degr, width, length) {
-			if(width == null && length == null)
-				width = 1;
+		constructor(coord, degr, width, length, color = 'black') {
 			this.coord = coord;
 			this.degr = degr;
-			this.width = width;
-			this.length = length;
-			this.angles = new Array((width == null || length == null)? 2 : 4);
-			this.calcAngles
+			this.width = (width == null || width < 0)? 0 : width;
+			this.length = (length == null || length < 0)? 0 : length;
+			this.corners = new Array();
+			this.color = color;
+			this.calcCorners();
 		}
-		calcAngles() {
-			this.barr.p1.set(inters.x + Math.cos(formA(this.barr.degr, 'rad'))* this.barr.len/2,
-			inters.y - Math.sin(formA(this.barr.degr, 'rad'))* this.barr.len/2);
-			this.barr.p2.set(inters.x - Math.cos(formA(this.barr.degr, 'rad'))* this.barr.len/2,
-			inters.y + Math.sin(formA(this.barr.degr, 'rad'))* this.barr.len/2);
+		calcCorners() {
+			this.corners.push(new Coord(this.coord.x + cosD(this.degr)*(this.length/2) + cosD(this.degr+90)*(this.width/2),
+								this.coord.y - sinD(this.degr)*(this.length/2) - sinD(this.degr+90)*(this.width/2)));
+			if (this.width > 0) {
+				this.corners.push(new Coord(this.coord.x + cosD(this.degr)*(this.length/2) - cosD(this.degr+90)*(this.width/2),
+								this.coord.y - sinD(this.degr)*(this.length/2) + sinD(this.degr+90)*(this.width/2)));
+			}
+			if (this.length > 0) {
+				this.corners.push(new Coord(this.coord.x - cosD(this.degr)*(this.length/2) - cosD(this.degr+90)*(this.width/2),
+								this.coord.y + sinD(this.degr)*(this.length/2) + sinD(this.degr+90)*(this.width/2)));
+				if (this.width > 0) {
+					this.corners.push(new Coord(this.coord.x - cosD(this.degr)*(this.length/2) + cosD(this.degr+90)*(this.width/2),
+									this.coord.y + sinD(this.degr)*(this.length/2) - sinD(this.degr+90)*(this.width/2)));
+				}
+			}
 		}
-		hitR(rigidRect) {
+		hitR(rRect) {
 			
 		}
-		hitC(rigidCirc) {
+		hitC(rCirc) {
 
 		}
 		bounce(mirrorDegr) {
-			if (mirrorDegr >= 180) {
-				mirrorDegr -= 180;
-			}	
+			this.degr = formA(mirrorDegr*2-this.degr+180);
+		}
+		showHitbox() {
+			ctx.strokeStyle = this.color;
+			for (let i = 0; i < this.corners.length; i++) {
+				line(this.corners[i], this.corners[(i+1)%this.corners.length]);
+				//ctx.fillText(i, this.corners[i].x, this.corners[i].y);
+			}
 		}
 	}
 	class RigidCirc {
@@ -96,16 +174,14 @@
 			this.degr = degr;
 			this.radius = radius;
 		}
-		hitR(rigidRect) {
+		hitR(rRect) {
 			
 		}
-		hitC(rigidCirc) {
+		hitC(rCirc) {
 
 		}
 		bounce(mirrorDegr) {
-			if (mirrorDegr >= 180) {
-				mirrorDegr -= 180;
-			}	
+			this.degr = formA(mirrorDegr*2-this.degr+180);	
 		}
 	}
 //* user commands
@@ -114,8 +190,8 @@
 		pos: new Coord(),
 		btn: {
 			l: false,
-			r: false,
-			m: false
+			m: false,
+			r: false
 		}
 	};
 	document.addEventListener('contextmenu', event => event.preventDefault());
@@ -126,7 +202,7 @@
 			case 2: mouse.btn.r = true; break;
 			default: break;
 		}
-		if (inspectVar != undefined && inspectVar != null) {
+		if (inspectVar != undefined) {
 			console.log(inspectVar);
 		}
 	})
@@ -153,6 +229,7 @@
 		e: false,
 		space: false,
 		enter: false,
+		esc: false
 	};
 	document.addEventListener('keydown', function(e) {
 		switch (e.code) {
@@ -166,6 +243,7 @@
 			case 'KeyE': key.e = true; break;
 			case 'Space': key.space = true; break;
 			case 'Enter': key.enter = true; break;
+			case 'Escape': key.esc = true; break;
 			default: break;
 		}
 	});
@@ -181,6 +259,7 @@
 			case 'KeyE': key.e = false; break;
 			case 'Space': key.space = false; break;
 			case 'Enter': key.enter = false; break;
+			case 'Escape': key.esc = false; break;
 			default: break;
 		}
 	});

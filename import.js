@@ -76,25 +76,39 @@
 		c: new Coord(canvas.width/2, canvas.height/2)
 	}
 	let ctx = canvas.getContext("2d");
-	function circleS(coord, radius) {
+	function circle(coord, radius, action = '') {
 		ctx.beginPath();
 		ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
-		ctx.stroke();
+		if (action == '' || action == 'fill') {
+			ctx.fill();
+		}
+		if (action == '' || action == 'stroke') {
+			ctx.stroke();
+		}
 	}
-	function rectS(coord, width, length) { //? rect with lines parallel to screen
+	function rectV(coord, width, length, action = '') { //? rect with lines parallel to screen
 		ctx.beginPath();
 		ctx.rect(coord.x, coord.y, width, length);
-		ctx.stroke();
+		if (action == '' || action == 'fill') {
+			ctx.fill();
+		}
+		if (action == '' || action == 'stroke') {
+			ctx.stroke();
+		}
 	}
-	function circleF(coord, radius) {
+	function rectC(coord1, coord2, action = '') { //? rect with lines parallel to screen
 		ctx.beginPath();
-		ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
-		ctx.fill();
-	}
-	function rectF(coord, width, length) { //? rect with lines parallel to screen
-		ctx.beginPath();
-		ctx.rect(coord.x, coord.y, width, length);
-		ctx.fill();
+		let x = (coord2.x < coord1.x)? coord2.x : coord1.x;
+		let y = (coord2.y < coord1.y)? coord2.y : coord1.y;
+		let w = Math.abs(coord1.x-coord2.x);
+		let h = Math.abs(coord1.y-coord2.y);		
+		ctx.rect(x, y, w, h);
+		if (action == '' || action == 'fill') {
+			ctx.fill();
+		}
+		if (action == '' || action == 'stroke') {
+			ctx.stroke();
+		}
 	}
 	function line(coord1, coord2) {
 		ctx.beginPath();
@@ -155,7 +169,7 @@
 			
 		}
 		hitC(rCirc) {
-
+			
 		}
 		bounce(mirrorDegr) {
 			this.degr = formA(mirrorDegr*2-this.degr+180);

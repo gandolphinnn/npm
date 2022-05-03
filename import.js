@@ -150,6 +150,7 @@
 			this.calcCorners();
 		}
 		calcCorners() {
+			this.corners = new Array();
 			this.corners.push(new Coord(this.coord.x + cosD(this.degr)*(this.length/2) + cosD(this.degr+90)*(this.width/2),
 								this.coord.y - sinD(this.degr)*(this.length/2) - sinD(this.degr+90)*(this.width/2)));
 			if (this.width > 0) {
@@ -192,14 +193,14 @@
 			
 		}
 		hitC(rCirc) {
-
+			return (Math.sqrt((rCirc.coord.x - this.coord.x) **2 + (rCirc.coord.y - this.coord.y) ** 2) <= rCirc.radius + this.radius);
 		}
 		bounce(mirrorDegr) {
 			this.degr = formA(mirrorDegr*2-this.degr+180);	
 		}
 	}
 //* user commands
-	let inspectVar; //? to use to inspect a variable when you press a mouse button
+	let inspectVar; //? use to inspect a variable when you press a mouse button
 	let mouse = {
 		pos: new Coord(),
 		btn: {

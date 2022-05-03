@@ -193,7 +193,7 @@
 			
 		}
 		hitC(rCirc) {
-			return (Math.sqrt((rCirc.coord.x - this.coord.x) **2 + (rCirc.coord.y - this.coord.y) ** 2) <= rCirc.radius + this.radius);
+			return (Math.sqrt((this.coord.x - rCirc.coord.x) ** 2 + (this.coord.y - rCirc.coord.y) ** 2) <= this.radius + rCirc.radius);
 		}
 		bounce(mirrorDegr) {
 			this.degr = formA(mirrorDegr*2-this.degr+180);	

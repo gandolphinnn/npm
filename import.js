@@ -202,6 +202,7 @@
 			this.calcCorners();
 		}
 		calcCorners() {
+			this.corners = new Array();
 			this.corners.push(new Coord(this.coord.x + cosD(this.degr)*(this.length/2) + cosD(this.degr+90)*(this.width/2),
 								this.coord.y - sinD(this.degr)*(this.length/2) - sinD(this.degr+90)*(this.width/2)));
 			if (this.width > 0) {
@@ -244,7 +245,7 @@
 			
 		}
 		hitC(rCirc) {
-
+			return (Math.sqrt((this.coord.x - rCirc.coord.x) ** 2 + (this.coord.y - rCirc.coord.y) ** 2) <= this.radius + rCirc.radius);
 		}
 		bounce(mirrorDegr) {
 			this.degr = formA(mirrorDegr*2-this.degr+180);	

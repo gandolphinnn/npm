@@ -1,47 +1,94 @@
 //* math
-	function formA(angle, type = '') {
-		if (type == 'rad') {
-			angle %= 360; // turn in |0 - 360| range
-			if (angle < 0)
-				angle += 360 // turn in positive angle
-			angle *= Math.PI / 180;
+	export const mathF = {
+		formA: (angle, type = '') => {
+			if (type == 'rad') {
+				angle %= 360; // turn in |0 - 360| range
+				if (angle < 0)
+					angle += 360 // turn in positive angle
+				angle *= Math.PI / 180;
+			}
+			if (type == 'degr') {
+				angle *= 180 / Math.PI;
+				angle %= 360; // turn in |0 - 360| range
+				if (angle < 0)
+					angle += 360 // turn in positive angle
+			}
+			if (type == '') {
+				angle %= 360; // turn in |0 - 360| range
+				if (angle < 0)
+					angle += 360 // turn in positive angle
+			}
+			return angle;
+		},
+		rand: (min, max) => {
+			min = Math.ceil(min);
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		},
+		rand0: (max) => {
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - 1));
+		},
+		last: (arr) => {
+			if (!Array.isArray(arr)) {
+				return false;
+			}
+			return arr[arr.length-1];
+		},
+		cosD: (degr) => {
+			return Math.cos(formA(degr, 'rad'));
+		},
+		sinD: (degr) => {
+			return Math.sin(formA(degr, 'rad'));
+		},
+	}
+//*  date
+	export const unixF = {
+		toDate: (timestamp, format = 'dd/mm/yyyy') => {
+			let date = new Date(timestamp);
+			let result;
+	/* 		let cType = ''; //find a better way
+			let types = ['d', 'm', 'y'];
+			format.forEach(char => {
+				let tIndex = types.indexOf(char);
+				if (char != cType && tIndex == undefined) { //? separator
+					result += char;
+				}
+				else if (char != type) {
+					type = char;
+
+				}
+				else {
+					if ()
+				}
+			}); */
+			result = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+			return result;
+		},
+		toTime: (timestamp, format = 'hh:mm:ss') => {
+			let time = new Date(timestamp);
+			let H = time.getHours();
+			let M = time.getMinutes();
+			return (H < 10?'0':'') + H + ':' + (M < 10?'0':'') + M;
+		},
+		toWeekDay: (timestamp, format = 'full') => {
+			let days;
+			if (format == 'full') {
+				days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			}
+			else if(format == 'short') {
+				days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+			}
+			return days[new Date(timestamp).getDay()];
+		},
+		dateCMP: (timestamp1, timestamp2) => {
+			let d1 = unix.toDate(timestamp1).split('/');
+			let d2 = unix.toDate(timestamp2).split('/');
+			return d1[2] == d2[2]? (d1[1] == d2[1]? (d1[0] == d2[0]? false : true) : true) : true;
 		}
-		if (type == 'degr') {
-			angle *= 180 / Math.PI;
-			angle %= 360; // turn in |0 - 360| range
-			if (angle < 0)
-				angle += 360 // turn in positive angle
-		}
-		if (type == '') {
-			angle %= 360; // turn in |0 - 360| range
-			if (angle < 0)
-				angle += 360 // turn in positive angle
-		}
-		return angle;
-	}
-	function rand(min, max) {
-		min = Math.ceil(min);
-		max = Math.floor(max);
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
-	function rand0(max) {
-		max = Math.floor(max);
-		return Math.floor(Math.random() * (max - 1));
-	}
-	function last(arr) {
-		if (!Array.isArray(arr)) {
-			return false;
-		}
-		return arr[arr.length-1];
-	}
-	function cosD(degr) {
-		return Math.cos(formA(degr, 'rad'));
-	}
-	function sinD(degr) {
-		return Math.sin(formA(degr, 'rad'));
 	}
 //* graphics
-	class Coord {
+	export class Coord {
 		constructor(x, y) {
 			this.x = x;
 			this.y = y;
@@ -58,88 +105,93 @@
 			return Math.sqrt((this.x + coord.x) ** 2 + (this.y + coord.y )** 2);
 		}
 	}
-	function sum2Coord(coord1, coord2) {
-		return new Coord(coord1.x + coord2.x, coord1.y + coord2.y);
-	}
-	function sumCoordVal(coord1, x, y) {
-		return new Coord(coord1.x + x, coord1.y + y);
-	}
-	function dist(coord1, coord2) {
-		return Math.sqrt(((coord1.x - coord2.x) ** 2) + ((coord1.y - coord2.y) ** 2));
+	export const coordF = {
+		sum2: (coord1, coord2) => {
+			return new Coord(coord1.x + coord2.x, coord1.y + coord2.y);
+		},
+		sumVal: (coord1, x, y) => {
+			return new Coord(coord1.x + x, coord1.y + y);
+		},
+		dist: (coord1, coord2) => {
+			return Math.sqrt(((coord1.x - coord2.x) ** 2) + ((coord1.y - coord2.y) ** 2));
+		},
 	}
 	let canvas = document.querySelector("canvas");
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
-	const cnv = {
-		w: canvas.width,
-		h: canvas.height,
-		c: new Coord(canvas.width/2, canvas.height/2)
+	export const cnv = {
+		body: canvas,
+		width: canvas.width,
+		height: canvas.height,
+		center: new Coord(canvas.width/2, canvas.height/2)
 	}
-	let ctx = canvas.getContext("2d");
-	function circle(coord, radius, action = '') {
-		ctx.beginPath();
-		ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
-		if (action == '' || action == 'fill') {
-			ctx.fill();
-		}
-		if (action == '' || action == 'stroke') {
+	export let ctx = canvas.getContext("2d");
+	export const draw = {
+		circle: (coord, radius, action = '') => {
+			ctx.beginPath();
+			ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
+			if (action == '' || action == 'fill') {
+				ctx.fill();
+			}
+			if (action == '' || action == 'stroke') {
+				ctx.stroke();
+			}
+		},
+		rectV: (coord, width, length, action = '') => { //? rect with lines parallel to screen
+			ctx.beginPath();
+			ctx.rect(coord.x, coord.y, width, length);
+			if (action == '' || action == 'fill') {
+				ctx.fill();
+			}
+			if (action == '' || action == 'stroke') {
+				ctx.stroke();
+			}
+		},
+		rectC: (coord1, coord2, action = '') => { //? rect with lines parallel to screen
+			ctx.beginPath();
+			let x = (coord2.x < coord1.x)? coord2.x : coord1.x;
+			let y = (coord2.y < coord1.y)? coord2.y : coord1.y;
+			let w = Math.abs(coord1.x-coord2.x);
+			let h = Math.abs(coord1.y-coord2.y);		
+			ctx.rect(x, y, w, h);
+			if (action == '' || action == 'fill') {
+				ctx.fill();
+			}
+			if (action == '' || action == 'stroke') {
+				ctx.stroke();
+			}
+		},
+		line: (coord1, coord2) => {
+			ctx.beginPath();
+			ctx.moveTo(coord1.x, coord1.y);
+			ctx.lineTo(coord2.x, coord2.y);
 			ctx.stroke();
-		}
-	}
-	function rectV(coord, width, length, action = '') { //? rect with lines parallel to screen
-		ctx.beginPath();
-		ctx.rect(coord.x, coord.y, width, length);
-		if (action == '' || action == 'fill') {
-			ctx.fill();
-		}
-		if (action == '' || action == 'stroke') {
-			ctx.stroke();
-		}
-	}
-	function rectC(coord1, coord2, action = '') { //? rect with lines parallel to screen
-		ctx.beginPath();
-		let x = (coord2.x < coord1.x)? coord2.x : coord1.x;
-		let y = (coord2.y < coord1.y)? coord2.y : coord1.y;
-		let w = Math.abs(coord1.x-coord2.x);
-		let h = Math.abs(coord1.y-coord2.y);		
-		ctx.rect(x, y, w, h);
-		if (action == '' || action == 'fill') {
-			ctx.fill();
-		}
-		if (action == '' || action == 'stroke') {
-			ctx.stroke();
-		}
-	}
-	function line(coord1, coord2) {
-		ctx.beginPath();
-		ctx.moveTo(coord1.x, coord1.y);
-		ctx.lineTo(coord2.x, coord2.y);
-		ctx.stroke();
-	}
-	function showUnits(unit = 0) {
-		ctx.clearRect(0,0, innerWidth, innerHeight);
-		let lineL = [1, 5, 10, 50, 100, 250, 500, 1000];
-		if (unit > 0 && unit < cnv.w && !lineL.includes(unit)) {
-			lineL.push(unit);
-			lineL.sort(function(a, b) {
-				return a - b;
+		},
+		units: (unit = 0) => {
+			ctx.clearRect(0,0, innerWidth, innerHeight);
+			let lineL = [1, 5, 10, 50, 100, 250, 500, 1000];
+			if (unit > 0 && unit < cnv.w && !lineL.includes(unit)) {
+				lineL.push(unit);
+				lineL.sort(function(a, b) {
+					return a - b;
+				});
+			}
+			let coord = new Coord(cnv.c.x-500, cnv.c.y-(20*lineL.length/2));
+			ctx.lineWidth = 4;
+			lineL.forEach(l => {
+				if (l == unit) {
+					ctx.strokeStyle = 'red';
+				}
+				else {
+					ctx.strokeStyle = 'black';
+				}
+				line(coord, sumCoordVal(coord, l, 0));
+				coord.add(0, 20);
 			});
 		}
-		let coord = new Coord(cnv.c.x-500, cnv.c.y-(20*lineL.length/2));
-		ctx.lineWidth = 4;
-		lineL.forEach(l => {
-			if (l == unit) {
-				ctx.strokeStyle = 'red';
-			}
-			else {
-				ctx.strokeStyle = 'black';
-			}
-			line(coord, sumCoordVal(coord, l, 0));
-			coord.add(0, 20);
-		});
 	}
 //* rigidbodies
-	class RigidRect {
+	export class RigidRect {
 		constructor(coord, degr, width, length, color = 'black') {
 			this.coord = coord;
 			this.degr = degr;
@@ -182,7 +234,7 @@
 			}
 		}
 	}
-	class RigidCirc {
+	export class RigidCirc {
 		constructor(coord, degr, radius) {
 			this.coord = coord;
 			this.degr = degr;
@@ -199,14 +251,27 @@
 		}
 	}
 //* user commands
-	let inspectVar; //? to use to inspect a variable when you press a mouse button
-	let mouse = {
+	export let inspectVar; //? to use to inspect a variable when you press a mouse button
+	export let mouse = {
 		pos: new Coord(),
 		btn: {
 			l: false,
 			m: false,
 			r: false
 		}
+	};
+	export let key = {
+		w: false,
+		a: false,
+		s: false,
+		d: false,
+		shift: false,
+		ctrl: false,
+		q: false,
+		e: false,
+		space: false,
+		enter: false,
+		esc: false
 	};
 	document.addEventListener('contextmenu', event => event.preventDefault());
 	document.addEventListener('mousedown', function(e) {
@@ -232,19 +297,6 @@
 		mouse.pos.y = e.clientY;
 		mouse.pos.x = e.clientX;
 	});
-	let key = {
-		w: false,
-		a: false,
-		s: false,
-		d: false,
-		shift: false,
-		ctrl: false,
-		q: false,
-		e: false,
-		space: false,
-		enter: false,
-		esc: false
-	};
 	document.addEventListener('keydown', function(e) {
 		switch (e.code) {
 			case 'KeyW': case 'ArrowUp': key.w = true; break;		

@@ -1,18 +1,5 @@
-let v = 4;
-console.log(v);
-module.exports = {
-	f1: () => {
-		console.log('first export');
-	},
-	f2: () => {
-		console.log('second export');
-	},
-	C1: class {
-		constructor() {
-			this.a = v;
-		}
-		clog() {
-			console.log(this.a);
-		}
-	},
-};
+let canvas = document.querySelector("canvas");
+let ctx = canvas.getContext("2d");
+ctx.beginPath();
+ctx.rect(100, 100, 10, 10);
+ctx.stroke();

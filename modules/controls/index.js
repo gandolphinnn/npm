@@ -1,5 +1,4 @@
 //! unpublished
-//* user controls
 	let inspectVar; //? to use to inspect a variable when you press a mouse button
 	let mouse = {
 		pos: new Coord(),
@@ -78,4 +77,3 @@
 			default: break;
 		}
 	});
-/* module.exports = ; */

@@ -1,5 +1,5 @@
 //! unpublished
-const mathF = require('math');
+//! require 'math' and 'graphic2');
 const graphics = require('graphic2');
 const Coord = graphics.Coord;
 class RigidRect{
@@ -14,18 +14,18 @@ class RigidRect{
 	}
 	calcCorners() {
 		this.corners = new Array();
-		this.corners.push(new Coord(this.coord.x + mathF.cosD(this.degr)*(this.length/2) + mathF.cosD(this.degr+90)*(this.width/2),
-							this.coord.y - mathF.sinD(this.degr)*(this.length/2) - mathF.sinD(this.degr+90)*(this.width/2)));
+		this.corners.push(new Coord(this.coord.x + cosD(this.degr)*(this.length/2) + cosD(this.degr+90)*(this.width/2),
+							this.coord.y - sinD(this.degr)*(this.length/2) - sinD(this.degr+90)*(this.width/2)));
 		if (this.width > 0) {
-			this.corners.push(new Coord(this.coord.x + mathF.cosD(this.degr)*(this.length/2) - mathF.cosD(this.degr+90)*(this.width/2),
-							this.coord.y - mathF.sinD(this.degr)*(this.length/2) + mathF.sinD(this.degr+90)*(this.width/2)));
+			this.corners.push(new Coord(this.coord.x + cosD(this.degr)*(this.length/2) - cosD(this.degr+90)*(this.width/2),
+							this.coord.y - sinD(this.degr)*(this.length/2) + sinD(this.degr+90)*(this.width/2)));
 		}
 		if (this.length > 0) {
-			this.corners.push(new Coord(this.coord.x - mathF.cosD(this.degr)*(this.length/2) - mathF.cosD(this.degr+90)*(this.width/2),
-							this.coord.y + mathF.sinD(this.degr)*(this.length/2) + mathF.sinD(this.degr+90)*(this.width/2)));
+			this.corners.push(new Coord(this.coord.x - cosD(this.degr)*(this.length/2) - cosD(this.degr+90)*(this.width/2),
+							this.coord.y + sinD(this.degr)*(this.length/2) + sinD(this.degr+90)*(this.width/2)));
 			if (this.width > 0) {
-				this.corners.push(new Coord(this.coord.x - mathF.cosD(this.degr)*(this.length/2) + mathF.cosD(this.degr+90)*(this.width/2),
-								this.coord.y + mathF.sinD(this.degr)*(this.length/2) - mathF.sinD(this.degr+90)*(this.width/2)));
+				this.corners.push(new Coord(this.coord.x - cosD(this.degr)*(this.length/2) + cosD(this.degr+90)*(this.width/2),
+								this.coord.y + sinD(this.degr)*(this.length/2) - sinD(this.degr+90)*(this.width/2)));
 			}
 		}
 	}
@@ -36,7 +36,7 @@ class RigidRect{
 		console.log('Work In Progress');
 	}
 	bounce(mirrorDegr) {
-		this.degr = mathF.formA(mirrorDegr*2-this.degr+180);
+		this.degr = formA(mirrorDegr*2-this.degr+180);
 	}
 	showHitbox() {
 		ctx.strokeStyle = this.color;
@@ -58,12 +58,12 @@ class RigidCirc {
 		return (Math.sqrt((this.coord.x - rCirc.coord.x) ** 2 + (this.coord.y - rCirc.coord.y) ** 2) <= this.radius + rCirc.radius);
 	}
 	bounce(mirrorDegr) {
-		this.degr = mathF.formA(mirrorDegr*2-this.degr+180);
+		this.degr = formA(mirrorDegr*2-this.degr+180);
 	}
 }
 const rigidF = {
 	bounce: (rBody, mirrorDegr) => {
-		rigidBody.degr = mathF.formA(mirrorDegr*2-rigidBody.degr+180);
+		rigidBody.degr = formA(mirrorDegr*2-rigidBody.degr+180);
 	},
 	collCC: (rCirc1, rCirc2) => {
 		return (Math.sqrt((rCirc1.coord.x - rCirc2.coord.x) ** 2 + (rCirc1.coord.y - rCirc2.coord.y) ** 2) <= rCirc1.radius + rCirc2.radius);

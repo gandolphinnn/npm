@@ -1,7 +1,7 @@
 {
-  "name": "graphics2",
+  "name": "@gandolphinnn/graphics2",
   "version": "1.0.0",
-  "description": "canvas 2D Coord class and functions",
+  "description": "functions and classes for 2D graphics using canvas",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

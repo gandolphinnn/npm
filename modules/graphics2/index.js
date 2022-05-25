@@ -1,7 +1,14 @@
 //! unpublished
 let canvas = document.querySelector("canvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+/* canvas.width = window.innerWidth;
+canvas.height = window.innerHeight; */
+ctx = canvas.getContext("2d"),
+cnv = {
+	body: canvas,
+	width: canvas.width,
+	height: canvas.height,
+	center: new Coord(canvas.width/2, canvas.height/2)
+};
 class Coord{
 	constructor(x, y) {
 		this.x = x;
@@ -37,13 +44,6 @@ class Line {
 		return hitPoint;
 	}
 }
-ctx = canvas.getContext("2d"),
-cnv = {
-	body: canvas,
-	width: canvas.width,
-	height: canvas.height,
-	center: new Coord(canvas.width/2, canvas.height/2)
-};
 let coordF = {
 	sum2: (coord1, coord2) => {
 		return new Coord(coord1.x + coord2.x, coord1.y + coord2.y);

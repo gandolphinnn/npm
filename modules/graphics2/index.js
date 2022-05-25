@@ -19,6 +19,24 @@ class Coord{
 		return Math.sqrt((this.x + coord.x) ** 2 + (this.y + coord.y )** 2);
 	}
 }
+class Line {
+	constructor(coord1, coord2) {
+		this.coord1 = coord1;
+		this.coord2 = coord2;
+	}
+	hitL(line) {
+		let hitPoint = false;
+		let x1 = this.coord1.x, x2 = this.coord2.x, x3 = line.coord1.x, x4 = line.coord2.x;
+		let y1 = this.coord1.y, y2 = this.coord2.y, y3 = line.coord1.y, y4 = line.coord2.y;
+		let denom = (x1-x2)*(y3-y4) - (x3-x4)*(y1-y2);
+		let t = ((x1-x3)*(y3-y4) - (x3-x4)*(y1-y3)) / denom;
+		let u = ((x1-x3)*(y1-y2) - (x1-x2)*(y1-y3)) / denom;
+		if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+			hitPoint = new Coord(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
+		}
+		return hitPoint;
+	}
+}
 ctx = canvas.getContext("2d"),
 cnv = {
 	body: canvas,

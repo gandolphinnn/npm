@@ -21,7 +21,7 @@ function animate() {
 	}
 	obj1.degr++;
 	obj1.calcCorners();
-	obj2.coord.x += Math.sin(mathF.formA(obj1.degr, 'rad'));
+	obj2.coord.x += Math.sin(mathF.formA(obj1.degr, 'rad'))*2;
 	obj2.calcCorners();
 	if (key.s || key.down) {
 		obj3.coord.y++;
@@ -46,7 +46,7 @@ function animate() {
 
 }
 let obj1 = new R(new Coord(200, 200), 50, 100, 200);
-let obj2 = new R(new Coord(280, 200), 50, 100, 200);
+let obj2 = new R(new Coord(260, 200), 50, 100, 200);
 let obj3 = new C(new Coord(200, 500), 50, 50);
 let obj4 = new C(new Coord(280, 480), 50, 50);
 animate();

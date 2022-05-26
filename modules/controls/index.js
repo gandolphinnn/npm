@@ -28,11 +28,11 @@ let key = {
 	tab: false,
 	esc: false
 };
-document.addEventListener('contextmenu', event => event.preventDefault());
-document.addEventListener('mousedown', function(e) {
+document.addEventListener('contextmenu', e => e.preventDefault()); //? prevent right click menu
+document.addEventListener('mousedown', e => {
 	switch (e.button) {
 		case 0: mouse.btn.l = true; break;
-		case 1: mouse.btn.m = true; e.preventDefault(); break;
+		case 1: mouse.btn.m = true; e.preventDefault(); break; //? prevent middle click scroller
 		case 2: mouse.btn.r = true; break;
 		default: break;
 	}
@@ -40,7 +40,7 @@ document.addEventListener('mousedown', function(e) {
 		console.log(inspectVar);
 	}
 })
-document.addEventListener('mouseup', function(e) {
+document.addEventListener('mouseup', e => {
 	switch (e.button) {
 		case 0: mouse.btn.l = false; break;
 		case 1: mouse.btn.m = false; break;
@@ -48,13 +48,13 @@ document.addEventListener('mouseup', function(e) {
 		default: break;
 	}
 })
-document.addEventListener('mousemove', function(e) {
+document.addEventListener('mousemove', e => {
 	mouse.pos.y = e.clientY;
 	mouse.pos.x = e.clientX;
 });
-document.addEventListener('keydown', event => event.preventDefault());
-document.addEventListener('keydown', function(e) {
-	console.log(e.code);
+document.addEventListener('keydown', e => {
+	if (e.code != 'F5' && e.code != 'F12')
+		e.preventDefault() //? allow to refresh and to open the page inspect
 	switch (e.code) {
 		case 'KeyW': key.w = true; break;
 		case 'ArrowUp': key.up = true; break;
@@ -74,7 +74,7 @@ document.addEventListener('keydown', function(e) {
 		default: break;
 	}
 });
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keyup', e => {
 	switch (e.code) {
 		case 'KeyW': key.w = false; break;
 		case 'ArrowUp': key.up = false; break;

@@ -1,5 +1,14 @@
 //! unpublished
 const unixF = {
+	/**
+	 * Convert from unix time to date.
+	 * @param {number} timestamp The unix timestamp.
+	 * @param {string} format The format of the date:
+	 * * use 'd' for dat, 'm' for month and 'yy' for year, double that to get the extended value
+	 * * any non-consecutive repeated special letters may cause bugs
+	 * * for example, toDate(1, 'yy.mm/a-d') will return '70.01/a-1'
+	 * @return {string} The date
+	 */
 	toDate: (timestamp, format = 'dd/mm/yyyy') => {
 		let date = new Date(timestamp);
 		let result = '';
@@ -28,7 +37,6 @@ const unixF = {
 			format = format.replace('y', '');
 		}
 		for (const char of format) {
-			console.log(char);
 			switch (char) {
 				case 'd':
 					result += val.date;
@@ -48,6 +56,50 @@ const unixF = {
 	},
 	toTime: (timestamp, format = 'hh:mm:ss') => {
 		let time = new Date(timestamp);
+		console.log(time);
+		let result = '';
+		let val = {
+			second: time.getSeconds(),
+			minute: time.getMinutes(),
+			hour: time.getHours()
+		};
+		return val;
+		if (format.indexOf('dd') != -1) {
+			format = format.replace('d', '');
+			if (date.getDate() < 10) {
+				val.date = '0' + val.date;
+			}
+		}
+		if (format.indexOf('mm') != -1) {
+			format = format.replace('m', '');
+			if (date.getMonth() < 10) {
+				val.month = '0' + val.month;
+			}
+		}
+		if (format.indexOf('yyyy') != -1) {
+			format = format.replace('yyy', '');
+		}
+		else if(format.indexOf('yy') != -1) {
+			val.year %= 100;
+			format = format.replace('y', '');
+		}
+		for (const char of format) {
+			switch (char) {
+				case 'd':
+					result += val.date;
+					break;
+				case 'm':
+					result += val.month;
+					break;
+				case 'y':
+					result += val.year;
+					break;
+				default:
+					result += char;
+					break;
+			}
+		};
+		return result;
 		let H = time.getHours();
 		let M = time.getMinutes();
 		return (H < 10?'0':'') + H + ':' + (M < 10?'0':'') + M;

@@ -1,8 +1,9 @@
 //! unpublished
 let canvas = document.querySelector("canvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = typeof cnvWidth === 'undefined'? window.innerWidth : cnvWidth;
+canvas.height = typeof cnvHeight === 'undefined'? window.innerHeight : cnvHeight;
 document.querySelector('body').style.overflow = 'hidden';
+document.querySelector('body').style.margin = '0px';
 ctx = canvas.getContext("2d");
 class Coord {
 	constructor(x, y) {
@@ -21,7 +22,7 @@ class Coord {
 		return Math.sqrt((this.x + coord.x) ** 2 + (this.y + coord.y )** 2);
 	}
 };
-cnv = {
+const cnv = {
 	body: canvas,
 	width: canvas.width,
 	height: canvas.height,
@@ -45,7 +46,7 @@ class Line {
 		return hitPoint;
 	}
 };
-let coordF = {
+const coordF = {
 	sum2: (coord1, coord2) => {
 		return new Coord(coord1.x + coord2.x, coord1.y + coord2.y);
 	},
@@ -56,7 +57,7 @@ let coordF = {
 		return Math.sqrt(((coord1.x - coord2.x) ** 2) + ((coord1.y - coord2.y) ** 2));
 	},
 };
-drawF = {
+const drawF = {
 	circle: (coord, radius, action = '') => {
 		ctx.beginPath();
 		ctx.arc(coord.x, coord.y, radius, 0, Math.PI * 2);
@@ -91,22 +92,31 @@ drawF = {
 			ctx.stroke();
 		}
 	},
+	/**
+	 * Draw a line between 2 points
+	 * @param {Coord} coord1 The starting point.
+	 * @param {Coord} coord1 The ending point:
+	 */
 	line: (coord1, coord2) => {
 		ctx.beginPath();
 		ctx.moveTo(coord1.x, coord1.y);
 		ctx.lineTo(coord2.x, coord2.y);
 		ctx.stroke();
 	},
+	/**
+	 * Show a variety of lengths for debug purpuses
+	 * @param {number} unit custom length to show, default 0
+	 */
 	units: (unit = 0) => {
 		ctx.clearRect(0,0, innerWidth, innerHeight);
 		let lineL = [1, 5, 10, 50, 100, 250, 500, 1000];
-		if (unit > 0 && unit < cnv.w && !lineL.includes(unit)) {
+		if (unit > 0 && unit < cnv.width && !lineL.includes(unit)) {
 			lineL.push(unit);
 			lineL.sort(function(a, b) {
 				return a - b;
 			});
 		}
-		let coord = new Coord(cnv.c.x-500, cnv.c.y-(20*lineL.length/2));
+		let coord = new Coord(cnv.center.x-500, cnv.center.y-(20*lineL.length/2));
 		ctx.lineWidth = 4;
 		lineL.forEach(l => {
 			if (l == unit) {
@@ -115,7 +125,8 @@ drawF = {
 			else {
 				ctx.strokeStyle = 'black';
 			}
-			line(coord, sumCoordVal(coord, l, 0));
+			ctx.fillText(l, coord.x - 30, coord.y+3)
+			drawF.line(coord, coordF.sumVal(coord, l, 0));
 			coord.add(0, 20);
 		});
 	}

@@ -60,17 +60,19 @@ const unixF = {
 	 * @param {string} format The format of the time:
 	 * * use 's' for seconds, 'm' for minutes and 'h' for hours, double that to get the extended value
 	 * * any non-consecutive repeated special letters may cause bugs
-	 * * for example, toTime(5, 'hh.mm/a-s') will return '70.01/a-1' IN THE GMT TIMEZONE
+	 * * for example, toTime(5, 'hh.mm/a-s') will return '' IN THE GMT TIMEZONE
 	 * @return {string} The date
 	 */
 	toTime: (timestamp, format = 'hh:mm:ss') => {
 		let time = new Date(timestamp);
+		console.log(time);
 		let result = '';
 		let val = {
 			seconds: time.getSeconds(),
 			minutes: time.getMinutes(),
 			hours: time.getHours()
 		};
+		console.log(val);
 		if (format.indexOf('ss') != -1) {
 			format = format.replace('s', '');
 			if (val.seconds < 10) {

@@ -1,7 +1,7 @@
 //! unpublished
 const unixF = {
 	/**
-	 * Convert from unix time to date.
+	 * Convert from unix timestamp to date.
 	 * @param {number} timestamp The unix timestamp.
 	 * @param {string} format The format of the date:
 	 * * use 'd' for dat, 'm' for month and 'yy' for year, double that to get the extended value
@@ -19,13 +19,13 @@ const unixF = {
 		};
 		if (format.indexOf('dd') != -1) {
 			format = format.replace('d', '');
-			if (date.getDate() < 10) {
+			if (val.date < 10) {
 				val.date = '0' + val.date;
 			}
 		}
 		if (format.indexOf('mm') != -1) {
 			format = format.replace('m', '');
-			if (date.getMonth() < 10) {
+			if (val.month < 10) {
 				val.month = '0' + val.month;
 			}
 		}
@@ -53,59 +53,62 @@ const unixF = {
 			}
 		};
 		return result;
-	},
-	toTime: (timestamp, format = 'hh:mm:ss') => {
-		let time = new Date(timestamp);
-		console.log(time);
-		let result = '';
-		let val = {
-			second: time.getSeconds(),
-			minute: time.getMinutes(),
-			hour: time.getHours()
-		};
-		return val;
-		if (format.indexOf('dd') != -1) {
-			format = format.replace('d', '');
-			if (date.getDate() < 10) {
-				val.date = '0' + val.date;
-			}
-		}
-		if (format.indexOf('mm') != -1) {
-			format = format.replace('m', '');
-			if (date.getMonth() < 10) {
-				val.month = '0' + val.month;
-			}
-		}
-		if (format.indexOf('yyyy') != -1) {
-			format = format.replace('yyy', '');
-		}
-		else if(format.indexOf('yy') != -1) {
-			val.year %= 100;
-			format = format.replace('y', '');
-		}
-		for (const char of format) {
-			switch (char) {
-				case 'd':
-					result += val.date;
-					break;
-				case 'm':
-					result += val.month;
-					break;
-				case 'y':
-					result += val.year;
-					break;
-				default:
-					result += char;
-					break;
-			}
-		};
-		return result;
-		let H = time.getHours();
-		let M = time.getMinutes();
-		return (H < 10?'0':'') + H + ':' + (M < 10?'0':'') + M;
 	},
 	/**
-	 * Convert from unix time to week day.
+	 * Convert from unix timestamp to time.
+	 * @param {number} timestamp The unix timestamp.
+	 * @param {string} format The format of the time:
+	 * * use 's' for seconds, 'm' for minutes and 'h' for hours, double that to get the extended value
+	 * * any non-consecutive repeated special letters may cause bugs
+	 * * for example, toTime(5, 'hh.mm/a-s') will return '70.01/a-1' IN THE GMT TIMEZONE
+	 * @return {string} The date
+	 */
+	toTime: (timestamp, format = 'hh:mm:ss') => {
+		let time = new Date(timestamp);
+		let result = '';
+		let val = {
+			seconds: time.getSeconds(),
+			minutes: time.getMinutes(),
+			hours: time.getHours()
+		};
+		if (format.indexOf('ss') != -1) {
+			format = format.replace('s', '');
+			if (val.seconds < 10) {
+				val.seconds = '0' + val.seconds;
+			}
+		}
+		if (format.indexOf('mm') != -1) {
+			format = format.replace('m', '');
+			if (val.minutes < 10) {
+				val.minutes = '0' + val.minutes;
+			}
+		}
+		if (format.indexOf('hh') != -1) {
+			format = format.replace('h', '');
+			if (val.hours < 10) {
+				val.hours = '0' + val.hours;
+			}
+		}
+		for (const char of format) {
+			switch (char) {
+				case 's':
+					result += val.seconds;
+					break;
+				case 'm':
+					result += val.minutes;
+					break;
+				case 'h':
+					result += val.hours;
+					break;
+				default:
+					result += char;
+					break;
+			}
+		};
+		return result;
+	},
+	/**
+	 * Convert from unix timestamp to week day.
 	 * @param {number} timestamp The unix timestamp.
 	 * @param {string} format The format of the day:
 	 * * 'f' or 'full' (default) for the full day name or the number of letters you want to output

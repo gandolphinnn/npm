@@ -1,1 +1,1 @@
-console.log(unixF.toTime(50000));
+console.log(unixF.toTime(62, 'hh.mm/a-s'));

@@ -63,7 +63,7 @@ const unixF = {
 	 * * for example, toTime(5, 'hh.mm/a-s') will return '' IN THE GMT TIMEZONE
 	 * @return {string} The date
 	 */
-	toTime: (timestamp, format = 'hh:mm:ss') => {
+/* 	toTime: (timestamp, format = 'hh:mm:ss') => {
 		let time = new Date(timestamp);
 		console.log(time);
 		let result = '';
@@ -108,7 +108,7 @@ const unixF = {
 			}
 		};
 		return result;
-	},
+	}, */
 	/**
 	 * Convert from unix timestamp to week day.
 	 * @param {number} timestamp The unix timestamp.
@@ -124,10 +124,5 @@ const unixF = {
 		else if(letters >= 0) {
 			return days[new Date(timestamp).getDay()].slice(0, letters);
 		}
-	},
-	dateCMP: (timestamp1, timestamp2) => {
-		let d1 = unix.toDate(timestamp1).split('/');
-		let d2 = unix.toDate(timestamp2).split('/');
-		return d1[2] == d2[2]? (d1[1] == d2[1]? (d1[0] == d2[0]? false : true) : true) : true;
 	}
 }

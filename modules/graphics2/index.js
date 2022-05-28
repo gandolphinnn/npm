@@ -131,3 +131,9 @@ const drawF = {
 		});
 	}
 };
+animate = (game) => {
+	ctx.clearRect(0,0, innerWidth, innerHeight);
+	game.backend();
+	game.frontend();
+	requestAnimationFrame(() => {animate(game)});
+}

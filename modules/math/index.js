@@ -35,6 +35,9 @@ const mathF = {
 		}
 		return arr[arr.length-1];
 	},
+	parentClass: (obj) => {
+		return Object.getPrototypeOf(obj.constructor).name
+	},
 	cosD: (degr) => {
 		return Math.cos(mathF.formA(degr, 'rad'));
 	},

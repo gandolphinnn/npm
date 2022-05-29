@@ -39,7 +39,6 @@ document.addEventListener('keydown', e => {
 		e.preventDefault() //? allow to refresh and to open the page inspect
 	let code = e.code.replace('Key', 'K').replace('Digit', 'D').replace('Numpad', 'P').replace('Arrow', '');
 	key[code] = true;
-	console.log(key);
 });
 document.addEventListener('keyup', e => {
 	let code = e.code.replace('Key', 'K').replace('Digit', 'D').replace('Numpad', 'P').replace('Arrow', '');

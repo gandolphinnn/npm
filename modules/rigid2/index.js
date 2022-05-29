@@ -27,24 +27,26 @@ class RigidRect{
 			}
 		}
 	}
-	hitR(rRect) {
-		let hitPoints = new Array(), line1, line2;
-		for (let i = 0; i < this.corners.length; i++) {
-			line1 = new Line(this.corners[i], this.corners[(i+1) % this.corners.length]);
-			for (let i = 0; i < rRect.corners.length; i++) {
-				line2 = new Line(rRect.corners[i], rRect.corners[(i+1) % rRect.corners.length]);
-				if(line1.hitL(line2)) {
-					hitPoints.push(line1.hitL(line2));
+	collision(rBody) {
+		if (mathF.parentClass(rBody) == 'RigidRect') {
+			let hitPoints = new Array(), line1, line2;
+			for (let i = 0; i < this.corners.length; i++) {
+				line1 = new Line(this.corners[i], this.corners[(i+1) % this.corners.length]);
+				for (let i = 0; i < rBody.corners.length; i++) {
+					line2 = new Line(rBody.corners[i], rBody.corners[(i+1) % rBody.corners.length]);
+					if(line1.hitL(line2)) {
+						hitPoints.push(line1.hitL(line2));
+					}
 				}
 			}
+			if (hitPoints.length == 0)
+				return false;
+			return hitPoints;
 		}
-		if (hitPoints.length == 0) {
+		else if(mathF.parentClass(rBody) == 'RigidCirc') {
+			console.log('Work In Progress');
 			return false;
 		}
-		return hitPoints;
-	}
-	hitC(rCirc) {
-		console.log('Work In Progress');
 	}
 	bounce(mirrorDegr) {
 		this.degr = mathF.formA(mirrorDegr*2-this.degr+180);
@@ -63,24 +65,27 @@ class RigidCirc {
 		this.radius = radius;
 		this.color = color
 	}
-	hitR(rRect) {
-		console.log('Work In Progress');
-	}
-	hitC(rCirc) {
-		let hitPoints = new Array();
-		let d = Math.sqrt((this.coord.x - rCirc.coord.x) ** 2 + (this.coord.y - rCirc.coord.y) ** 2);
-		if (d > this.radius + rCirc.radius) {
-			return false;			
+	collision(rBody) {
+		if (mathF.parentClass(rBody) == 'RigidRect') {
+			console.log('Work In Progress');
+			return false;
 		}
-		else {
-			let x1 = this.coord.x, y1 = this.coord.y, r1 = this.radius;
-			let x2 = rCirc.coord.x, y2 = rCirc.coord.y, r2 = rCirc.radius;
-			let l = (r1**2 - r2**2 + d**2) / (2*d);
-			let h = Math.sqrt(r1**2 - l**2);
-			hitPoints.push(new Coord(l/d*(x2-x1) + h/d*(y2-y1) + x1, l/d*(y2-y1) - h/d*(x2-x1) + y1));
-			hitPoints.push(new Coord(l/d*(x2-x1) - h/d*(y2-y1) + x1, l/d*(y2-y1) + h/d*(x2-x1) + y1));
+		else if(mathF.parentClass(rBody) == 'RigidCirc') {
+			let hitPoints = new Array();
+			let d = Math.sqrt((this.coord.x - rCirc.coord.x) ** 2 + (this.coord.y - rCirc.coord.y) ** 2);
+			if (d > this.radius + rCirc.radius) {
+				return false;			
+			}
+			else {
+				let x1 = this.coord.x, y1 = this.coord.y, r1 = this.radius;
+				let x2 = rCirc.coord.x, y2 = rCirc.coord.y, r2 = rCirc.radius;
+				let l = (r1**2 - r2**2 + d**2) / (2*d);
+				let h = Math.sqrt(r1**2 - l**2);
+				hitPoints.push(new Coord(l/d*(x2-x1) + h/d*(y2-y1) + x1, l/d*(y2-y1) - h/d*(x2-x1) + y1));
+				hitPoints.push(new Coord(l/d*(x2-x1) - h/d*(y2-y1) + x1, l/d*(y2-y1) + h/d*(x2-x1) + y1));
+			}
+			return hitPoints;
 		}
-		return hitPoints;
 	}
 	bounce(mirrorDegr) {
 		this.degr = mathF.formA(mirrorDegr*2-this.degr+180);
@@ -92,41 +97,43 @@ class RigidCirc {
 }
 const rigidF = {
 	bounce: (rBody, mirrorDegr) => {
-		rigidBody.degr = mathF.formA(mirrorDegr*2-rigidBody.degr+180);
+		rBody.degr = mathF.formA(mirrorDegr*2-rBody.degr+180);
 	},
-	collRR: (rRect1, rRect2) => {
-		let hitPoints = new Array(), line1, line2;
-		for (let i = 0; i < rRect1.corners.length; i++) {
-			line1 = new Line(rRect1.corners[i], rRect1.corners[(i+1) % rRect1.corners.length]);
-			for (let i = 0; i < rRect2.corners.length; i++) {
-				line2 = new Line(rRect2.corners[i], rRect2.corners[(i+1) % rRect2.corners.length]);
-				if(line1.hitL(line2)) {
-					hitPoints.push(line1.hitL(line2));
+	collision(rBody1, rBody2) {
+		let hitPoints = new Array();
+		if (mathF.parentClass(rBody1) == 'RigidRect' && mathF.parentClass(rBody2) == 'RigidRect') {
+			let line1, line2;
+			for (let i = 0; i < rBody1.corners.length; i++) {
+				line1 = new Line(rBody1.corners[i], rBody1.corners[(i+1) % rBody1.corners.length]);
+				for (let i = 0; i < rBody2.corners.length; i++) {
+					line2 = new Line(rBody2.corners[i], rBody2.corners[(i+1) % rBody2.corners.length]);
+					if(line1.hitL(line2)) {
+						hitPoints.push(line1.hitL(line2));
+					}
 				}
 			}
+			if (hitPoints.length == 0) {
+				return false;
+			}
+			return hitPoints;
 		}
-		if (hitPoints.length == 0) {
-			return false;
-		}
-		return hitPoints;
-	},
-	collCC: (rCirc1, rCirc2) => {
-		let hitPoints = new Array();
-		let d = Math.sqrt((rCirc1.coord.x - rCirc2.coord.x) ** 2 + (rCirc1.coord.y - rCirc2.coord.y) ** 2);
-		if (d > rCirc1.radius + rCirc2.radius) {
-			return false;			
+		else if (mathF.parentClass(rBody1) == 'RigidCirc' && mathF.parentClass(rBody2) == 'RigidCirc') {
+			let d = Math.sqrt((rCirc1.coord.x - rCirc2.coord.x) ** 2 + (rCirc1.coord.y - rCirc2.coord.y) ** 2);
+			if (d > rCirc1.radius + rCirc2.radius) {
+				return false;			
+			}
+			else {
+				let x1 = rCirc1.coord.x, y1 = rCirc1.coord.y, r1 = rCirc1.radius;
+				let x2 = rCirc2.coord.x, y2 = rCirc2.coord.y, r2 = rCirc2.radius;
+				let l = (r1**2 - r2**2 + d**2) / (2*d);
+				let h = Math.sqrt(r1**2 - l**2);
+				hitPoints.push(new Coord(l/d*(x2-x1) + h/d*(y2-y1) + x1, l/d*(y2-y1) - h/d*(x2-x1) + y1));
+				hitPoints.push(new Coord(l/d*(x2-x1) - h/d*(y2-y1) + x1, l/d*(y2-y1) + h/d*(x2-x1) + y1));
+			}
+			return hitPoints;
 		}
 		else {
-			let x1 = rCirc1.coord.x, y1 = rCirc1.coord.y, r1 = rCirc1.radius;
-			let x2 = rCirc2.coord.x, y2 = rCirc2.coord.y, r2 = rCirc2.radius;
-			let l = (r1**2 - r2**2 + d**2) / (2*d);
-			let h = Math.sqrt(r1**2 - l**2);
-			hitPoints.push(new Coord(l/d*(x2-x1) + h/d*(y2-y1) + x1, l/d*(y2-y1) - h/d*(x2-x1) + y1));
-			hitPoints.push(new Coord(l/d*(x2-x1) - h/d*(y2-y1) + x1, l/d*(y2-y1) + h/d*(x2-x1) + y1));
+			console.log('Work In Progress');
 		}
-		return hitPoints;
-	},
-	collRC: (rRect, rCirc) => {
-		console.log('Work In Progress');
 	}
 }

@@ -52,10 +52,13 @@ class RigidRect{
 		this.degr = mathF.formA(mirrorDegr*2-this.degr+180);
 	}
 	showHitbox() {
+		let color = ctx.strokeStyle;
 		ctx.strokeStyle = this.color;
 		for (let i = 0; i < this.corners.length; i++) {
 			drawF.line(this.corners[i], this.corners[(i+1)%this.corners.length]);
 		}
+		drawF.circle(this.coord, 3);
+		ctx.strokeStyle = color;
 	}
 }
 class RigidCirc {
@@ -91,8 +94,11 @@ class RigidCirc {
 		this.degr = mathF.formA(mirrorDegr*2-this.degr+180);
 	}
 	showHitbox() {
+		let color = ctx.strokeStyle;
 		ctx.strokeStyle = this.color;
 		drawF.circle(this.coord, this.radius, 'stroke');
+		drawF.circle(this.coord, 3);
+		ctx.strokeStyle = color;
 	}
 }
 const rigidF = {
@@ -102,6 +108,7 @@ const rigidF = {
 	collision(rBody1, rBody2) {
 		let hitPoints = new Array();
 		if (mathF.parentClass(rBody1) == 'RigidRect' && mathF.parentClass(rBody2) == 'RigidRect') {
+			//todo add point inside detection
 			let line1, line2;
 			for (let i = 0; i < rBody1.corners.length; i++) {
 				line1 = new Line(rBody1.corners[i], rBody1.corners[(i+1) % rBody1.corners.length]);
@@ -115,9 +122,9 @@ const rigidF = {
 			if (hitPoints.length == 0) {
 				return false;
 			}
-			return hitPoints;
 		}
 		else if (mathF.parentClass(rBody1) == 'RigidCirc' && mathF.parentClass(rBody2) == 'RigidCirc') {
+			//todo add point inside detection
 			let d = Math.sqrt((rCirc1.coord.x - rCirc2.coord.x) ** 2 + (rCirc1.coord.y - rCirc2.coord.y) ** 2);
 			if (d > rCirc1.radius + rCirc2.radius) {
 				return false;			
@@ -130,10 +137,32 @@ const rigidF = {
 				hitPoints.push(new Coord(l/d*(x2-x1) + h/d*(y2-y1) + x1, l/d*(y2-y1) - h/d*(x2-x1) + y1));
 				hitPoints.push(new Coord(l/d*(x2-x1) - h/d*(y2-y1) + x1, l/d*(y2-y1) + h/d*(x2-x1) + y1));
 			}
-			return hitPoints;
 		}
 		else {
-			console.log('Work In Progress');
+			let	rRect = mathF.parentClass(rBody1) == 'RigidRect'? rBody1 : rBody2;
+			let	rCirc = mathF.parentClass(rBody1) == 'RigidCirc'? rBody1 : rBody2;
+			/* let AM = coordF.dist(rRect.corners[0], rCirc.coord);
+			let AB = coordF.dist(rRect.corners[0], rRect.corners[1]);
+			let AD = coordF.dist(rRect.corners[0], mathF.last(rRect.corners));
+			//(0<AM⋅AB<AB⋅AB)∧(0<AM⋅AD<AD⋅AD)
+			if((0 < AM*AB) && (AM*AB < AB*AB) && (0 < AM*AD) && (AM*AD < AD*AD)) {
+				console.log(true);
+			} */
+			
+			//* distance circ center and rect corner <= circ radius
+			//* distance circ center and rect edge <= circ radius
+			//* circ center inside rect
+			let corn = rRect.corners, D;
+			for (let i = 0; i < corn.length; i++) {
+				D = (corn[(i+1)%corn.length].x - corn[i].x) * (rCirc.coord.y - corn[i].y) - (rCirc.coord.x - corn[i].x) * (corn[(i+1)%rRect.corners.length].y - rRect.corners[i].y)
+				/* if (D < 0) {
+					console.log(D);
+				} */
+			}
 		}
+		return hitPoints;
+	},
+	rayCast(coord, degr, rBodies) {
+
 	}
 }

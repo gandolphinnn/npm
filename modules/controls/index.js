@@ -42,5 +42,5 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => {
 	let code = e.code.replace('Key', 'K').replace('Digit', 'D').replace('Numpad', 'P').replace('Arrow', '');
-	delete key[code];
+	key[code] = false;
 });

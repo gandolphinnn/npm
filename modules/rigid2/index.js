@@ -125,13 +125,13 @@ const rigidF = {
 		}
 		else if (mathF.parentClass(rBody1) == 'RigidCirc' && mathF.parentClass(rBody2) == 'RigidCirc') {
 			//todo add point inside detection
-			let d = Math.sqrt((rCirc1.coord.x - rCirc2.coord.x) ** 2 + (rCirc1.coord.y - rCirc2.coord.y) ** 2);
-			if (d > rCirc1.radius + rCirc2.radius) {
+			let d = Math.sqrt((rBody1.coord.x - rBody2.coord.x) ** 2 + (rBody1.coord.y - rBody2.coord.y) ** 2);
+			if (d > rBody1.radius + rBody2.radius) {
 				return false;			
 			}
 			else {
-				let x1 = rCirc1.coord.x, y1 = rCirc1.coord.y, r1 = rCirc1.radius;
-				let x2 = rCirc2.coord.x, y2 = rCirc2.coord.y, r2 = rCirc2.radius;
+				let x1 = rBody1.coord.x, y1 = rBody1.coord.y, r1 = rBody1.radius;
+				let x2 = rBody2.coord.x, y2 = rBody2.coord.y, r2 = rBody2.radius;
 				let l = (r1**2 - r2**2 + d**2) / (2*d);
 				let h = Math.sqrt(r1**2 - l**2);
 				hitPoints.push(new Coord(l/d*(x2-x1) + h/d*(y2-y1) + x1, l/d*(y2-y1) - h/d*(x2-x1) + y1));
@@ -141,28 +141,44 @@ const rigidF = {
 		else {
 			let	rRect = mathF.parentClass(rBody1) == 'RigidRect'? rBody1 : rBody2;
 			let	rCirc = mathF.parentClass(rBody1) == 'RigidCirc'? rBody1 : rBody2;
-			/* let AM = coordF.dist(rRect.corners[0], rCirc.coord);
-			let AB = coordF.dist(rRect.corners[0], rRect.corners[1]);
-			let AD = coordF.dist(rRect.corners[0], mathF.last(rRect.corners));
-			//(0<AM⋅AB<AB⋅AB)∧(0<AM⋅AD<AD⋅AD)
-			if((0 < AM*AB) && (AM*AB < AB*AB) && (0 < AM*AD) && (AM*AD < AD*AD)) {
-				console.log(true);
-			} */
-			
-			//* distance circ center and rect corner <= circ radius
-			//* distance circ center and rect edge <= circ radius
-			//* circ center inside rect
-			let corn = rRect.corners, D;
+			//* distance (circ center, rect edge) <= circ radius (https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line)
+			// ay + bx + c = 0
+			//
+			let corn = rRect.corners, a, b, c, p1, p2, p = rCirc.coord;
 			for (let i = 0; i < corn.length; i++) {
-				D = (corn[(i+1)%corn.length].x - corn[i].x) * (rCirc.coord.y - corn[i].y) - (rCirc.coord.x - corn[i].x) * (corn[(i+1)%rRect.corners.length].y - rRect.corners[i].y)
-				/* if (D < 0) {
-					console.log(D);
-				} */
+				p1 = corn[i];
+				p2 = corn[(i+1)%corn.length];
+				a = p1.y - p2.y;
+				b = p2.x - p1.x;
+				c = p1.x * p2.y - p2.x * p1.y;
+				if (a == 0 && b != 0) {
+					((y(B)*(y(B)*x(P)-y(A)*y(P))-y(A)*y(C))/y(A)*y(A)+y(B)*y(B), (y(A)*(-y(B)*x(P)+y(A)*y(P)-y(B)*y(C))/y(A)**2+y(B)**2))
+				}
+				else
+					hitPoints.push(new Coord((b*(b*p.x-a*p.y)-a*c)/a**2+b**2, (a*(-b*p.x+a*p.y)-b*c)/a**2+b**2))
+				console.log(a+'x + '+b+'y + '+c);
 			}
+			console.log(hitPoints);
+			//* distance (circ center, rect corner) <= circ radius
+			// todo
+			//* circ center inside the rect without intersection
+			let D; //? has to prove it is outside
+			for (let i = 0; i < corn.length; i++) {
+				D = (corn[(i+1)%corn.length].x - corn[i].x) * (rCirc.coord.y - corn[i].y) - (rCirc.coord.x - corn[i].x) * (corn[(i+1)%rRect.corners.length].y - rRect.corners[i].y);
+				if (D < 0) {
+					hitPoints = false; //? center outside the circle
+				}
+			}
+			return hitPoints;
 		}
 		return hitPoints;
 	},
+	/* snap: (rBody, fixedBody) => {
+		if (rigidF.collision(rBody, fixedBody)) {
+
+		}
+	},
 	rayCast(coord, degr, rBodies) {
 
-	}
+	} */
 }

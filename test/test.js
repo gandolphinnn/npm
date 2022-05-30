@@ -5,10 +5,18 @@ class Game {
 	}
 	backend() {
 		this.player.move();
-		this.player.calcCorners();
+		if (mathF.parentClass(this.player) == 'RigidRect') {
+			this.player.calcCorners();
+		}
 		this.gameObj.forEach(obj => {
 			if (mathF.parentClass(obj) == 'RigidRect')
 				obj.calcCorners();
+		});
+	}
+	frontend() {
+		this.player.showHitbox();
+		this.gameObj.forEach(obj => {
+			obj.draw();
 		});
 		this.gameObj.forEach(obj => {
 			let hitPoints = rigidF.collision(this.player, obj)
@@ -17,34 +25,34 @@ class Game {
 					drawF.circle(point, 5);
 				});
 			}
-		});
-	}
-	frontend() {
-		this.player.showHitbox();
-		this.gameObj.forEach(obj => {
-			obj.draw();
+			hitPoints = rigidF.collision(this.player, obj)
+			if (hitPoints) {
+				hitPoints.forEach(point => {
+					drawF.circle(point, 5);
+				});
+			}
 		});
 	}
 	addObj(obj) {
 		this.gameObj.push(obj)
 	}
 }
-class Player extends RigidRect {
+class Player extends RigidCirc{
 	constructor() {
-		super(new Coord(320, 320), 0, 120, 120); //rect
-		//super(new Coord(100, 100), 0, 50); //circ
+		//super(new Coord(105, 105), 0, 100, 100); //rect
+		super(new Coord(105, 105), 0, 50, 50); //circ
 	}
 	draw() {
 		this.showHitbox();
 	}
 	move() {
-		if (key.KW || key.Up)
+		if (key.KW)
 			this.coord.y -= 5;
-		if (key.KA || key.Left)
+		if (key.KA)
 			this.coord.x -= 5;
-		if (key.KS || key.Down)
+		if (key.KS)
 			this.coord.y += 5;
-		if (key.KD || key.Right)
+		if (key.KD)
 			this.coord.x += 5;
 		if (key.KE)
 			this.degr -= 5;
@@ -62,7 +70,7 @@ class Rect extends RigidRect {
 }
 class Circ extends RigidCirc {
 	constructor() {
-		super(new Coord(500, 500), 0, 50);
+		super(new Coord(500, 500), 0, 60);
 	}
 	draw() {
 		this.showHitbox();

@@ -24,7 +24,6 @@ class Game {
 				hitPoints.forEach(point => {
 					drawF.circle(point, 5);
 				});
-				console.log(hitPoints);
 			}
 		});
 	}

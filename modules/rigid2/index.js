@@ -169,6 +169,7 @@ const rigidF = {
 				}
 				hitPoints.push(hitP);
 			}
+			console.log(minDist);
 			return hitPoints;
 			//* distance (circ center, rect corner) <= circ radius
 			// todo

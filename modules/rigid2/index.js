@@ -105,7 +105,17 @@ const rigidF = {
 	bounce: (rBody, mirrorDegr) => {
 		rBody.degr = mathF.formA(mirrorDegr*2-rBody.degr+180);
 	},
-	collision(rBody1, rBody2) {
+	/**
+	 * Convert from unix timestamp to time.
+	 * @param {RigirRect | RigidCirc} rBody1 The first rigidBody.
+	 * @param {RigirRect | RigidCirc} rBody2 The second rigidBody.
+	 * * use 's' for seconds, 'm' for minutes and 'h' for hours, double that to get the extended value
+	 * @return {boolean | array} 
+	 * * false if they don't collide
+	 * * an array with the coordinates of the intersections
+	 * * an empty array if they are one inside the other without intersection 
+	 */
+	collision(rBody1, rBody2) { //? return false if no collision, empty array if no intersection
 		let hitPoints = new Array();
 		if (mathF.parentClass(rBody1) == 'RigidRect' && mathF.parentClass(rBody2) == 'RigidRect') {
 			//todo add point inside detection
@@ -139,26 +149,27 @@ const rigidF = {
 			}
 		}
 		else {
+			//? define which one is rect and which one is circ
 			let	rRect = mathF.parentClass(rBody1) == 'RigidRect'? rBody1 : rBody2;
 			let	rCirc = mathF.parentClass(rBody1) == 'RigidCirc'? rBody1 : rBody2;
 			//* distance (circ center, rect edge) <= circ radius (https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line)
-			// ay + bx + c = 0
-			//
-			let corn = rRect.corners, a, b, c, p1, p2, p = rCirc.coord;
+			let corn = rRect.corners, a, b, c, p1, p2, p = rCirc.coord, hitP;
 			for (let i = 0; i < corn.length; i++) {
 				p1 = corn[i];
 				p2 = corn[(i+1)%corn.length];
 				a = p1.y - p2.y;
 				b = p2.x - p1.x;
 				c = p1.x * p2.y - p2.x * p1.y;
-				if (a == 0 && b != 0) {
-					((y(B)*(y(B)*x(P)-y(A)*y(P))-y(A)*y(C))/y(A)*y(A)+y(B)*y(B), (y(A)*(-y(B)*x(P)+y(A)*y(P)-y(B)*y(C))/y(A)**2+y(B)**2))
+				hitP = new Coord((b*(b*p.x-a*p.y)-a*c)/(a**2+b**2), (a*(a*p.y-b*p.x)-b*c)/(a**2+b**2));
+				if (hitP.dist(p1) + hitP.dist(p2) > p1.dist(p2) + 0.001) {
+					if (hitP.dist(p1) > hitP.dist(p2))
+						hitP = p2;
+					else
+						hitP = p1;
 				}
-				else
-					hitPoints.push(new Coord((b*(b*p.x-a*p.y)-a*c)/a**2+b**2, (a*(-b*p.x+a*p.y)-b*c)/a**2+b**2))
-				console.log(a+'x + '+b+'y + '+c);
+				hitPoints.push(hitP);
 			}
-			console.log(hitPoints);
+			return hitPoints;
 			//* distance (circ center, rect corner) <= circ radius
 			// todo
 			//* circ center inside the rect without intersection

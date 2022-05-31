@@ -112,7 +112,7 @@ const unixF = {
 	/**
 	 * Convert from unix timestamp to week day.
 	 * @param {number} timestamp The unix timestamp.
-	 * @param {string} format The format of the day:
+	 * @param {string | number} format The format of the day:
 	 * * 'f' or 'full' (default) for the full day name or the number of letters you want to output
 	 * @return {string} The week day
 	 */

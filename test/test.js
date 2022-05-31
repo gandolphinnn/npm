@@ -24,12 +24,7 @@ class Game {
 				hitPoints.forEach(point => {
 					drawF.circle(point, 5);
 				});
-			}
-			hitPoints = rigidF.collision(this.player, obj)
-			if (hitPoints) {
-				hitPoints.forEach(point => {
-					drawF.circle(point, 5);
-				});
+				console.log(hitPoints);
 			}
 		});
 	}
@@ -62,7 +57,7 @@ class Player extends RigidCirc{
 }
 class Rect extends RigidRect {
 	constructor() {
-		super(new Coord(150, 150), 0, 200, 200, 'red');
+		super(new Coord(150, 150), 30, 200, 200, 'red');
 	}
 	draw() {
 		this.showHitbox();

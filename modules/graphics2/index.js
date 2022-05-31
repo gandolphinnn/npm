@@ -19,7 +19,7 @@ class Coord {
 		this.y += addY;
 	}
 	dist(coord) {
-		return Math.sqrt((this.x + coord.x) ** 2 + (this.y + coord.y )** 2);
+		return Math.sqrt((this.x - coord.x) ** 2 + (this.y - coord.y )** 2);
 	}
 };
 const cnv = {

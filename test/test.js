@@ -1,4 +1,4 @@
-class Game {
+/* class Game {
 	constructor(player) {
 		this.player = player;
 		this.gameObj = new Array();
@@ -73,4 +73,5 @@ class Circ extends RigidCirc {
 let game = new Game(new Player());
 game.addObj(new Rect());
 game.addObj(new Circ());
-animate(game);
+animate(game); */
+

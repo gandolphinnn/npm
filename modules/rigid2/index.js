@@ -6,6 +6,7 @@ class RigidRect{
 		this.degr = degr;
 		this.width = (width == null || width < 0)? 0 : width;
 		this.length = (length == null || length < 0)? 0 : length;
+		this.diagonal = Math.sqrt(this.width**2 + this.length**2);
 		this.corners = new Array();
 		this.color = color;
 		this.calcCorners();
@@ -115,12 +116,12 @@ const rigidF = {
 	 * * an array with the coordinates of the intersections
 	 * * an empty array if they are one inside the other without intersection 
 	 */
-	collision(rBody1, rBody2) { //? return false if no collision, empty array if no intersection
+	collision(rBody1, rBody2) {
 		let hitPoints = new Array();
+		//* rect and rect
 		if (mathF.parentClass(rBody1) == 'RigidRect' && mathF.parentClass(rBody2) == 'RigidRect') {
-			//todo add point inside detection
 			let line1, line2;
-			for (let i = 0; i < rBody1.corners.length; i++) {
+			for (let i = 0; i < rBody1.corners.length; i++) { //? get intersections
 				line1 = new Line(rBody1.corners[i], rBody1.corners[(i+1) % rBody1.corners.length]);
 				for (let i = 0; i < rBody2.corners.length; i++) {
 					line2 = new Line(rBody2.corners[i], rBody2.corners[(i+1) % rBody2.corners.length]);
@@ -129,17 +130,17 @@ const rigidF = {
 					}
 				}
 			}
-			if (hitPoints.length == 0) {
+			if (hitPoints.length == 0) { //todo add '&& point not inside' in condition
 				return false;
 			}
 		}
+		//* circ and circ
 		else if (mathF.parentClass(rBody1) == 'RigidCirc' && mathF.parentClass(rBody2) == 'RigidCirc') {
-			//todo add point inside detection
 			let d = Math.sqrt((rBody1.coord.x - rBody2.coord.x) ** 2 + (rBody1.coord.y - rBody2.coord.y) ** 2);
-			if (d > rBody1.radius + rBody2.radius) {
+			if (d > rBody1.radius + rBody2.radius) { //? no intersections and outside
 				return false;			
 			}
-			else {
+			else if (d + rBody1.radius >= rBody2.radius && d + rBody2.radius >= rBody1.radius) { //? intersection
 				let x1 = rBody1.coord.x, y1 = rBody1.coord.y, r1 = rBody1.radius;
 				let x2 = rBody2.coord.x, y2 = rBody2.coord.y, r2 = rBody2.radius;
 				let l = (r1**2 - r2**2 + d**2) / (2*d);
@@ -148,15 +149,19 @@ const rigidF = {
 				hitPoints.push(new Coord(l/d*(x2-x1) - h/d*(y2-y1) + x1, l/d*(y2-y1) + h/d*(x2-x1) + y1));
 			}
 		}
+		//* circ and rect
 		else {
 			//? define which one is rect and which one is circ
 			let	rRect = mathF.parentClass(rBody1) == 'RigidRect'? rBody1 : rBody2;
 			let	rCirc = mathF.parentClass(rBody1) == 'RigidCirc'? rBody1 : rBody2;
-			//* distance (circ center, rect edge) <= circ radius (https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line)
-			
-			//* distance (circ center, rect corner) <= circ radius
-			// todo
-			//* circ center inside the rect without intersection
+			if (coordF.dist(rRect.coord, rCirc.coord) > rRect.diagonal/2+rCirc.radius) { //? too far to possibly intersect, avoid useless computation
+				return false;
+			}
+			//* (https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line)
+			//* first detect closest point to circle on each line
+			//* if distance <= radius, detect the 2 intersection using trigonometry
+			//* to check if circle inside rectangle use tangent to determine the point on the line to use for the distance and compare D to distance circCenter-rectCenter
+			let corn = rRect.corners;
 			let D; //? has to prove it is outside
 			for (let i = 0; i < corn.length; i++) {
 				D = (corn[(i+1)%corn.length].x - corn[i].x) * (rCirc.coord.y - corn[i].y) - (rCirc.coord.x - corn[i].x) * (corn[(i+1)%rRect.corners.length].y - rRect.corners[i].y);

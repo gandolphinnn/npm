@@ -1,17 +1,18 @@
-/* class Game {
+class Game {
 	constructor(player) {
 		this.player = player;
 		this.gameObj = new Array();
 	}
-	backend() {
-		this.player.move();
-		if (mathF.parentClass(this.player) == 'RigidRect') {
-			this.player.calcCorners();
-		}
+	awake() {
 		this.gameObj.forEach(obj => {
 			if (mathF.parentClass(obj) == 'RigidRect')
 				obj.calcCorners();
 		});
+	}
+	backend() {
+		this.player.move();
+		if (mathF.parentClass(this.player) == 'RigidRect')
+			this.player.calcCorners();
 	}
 	frontend() {
 		this.player.showHitbox();
@@ -20,6 +21,7 @@
 		});
 		this.gameObj.forEach(obj => {
 			let hitPoints = rigidF.collision(this.player, obj)
+			console.log(hitPoints);
 			if (hitPoints) {
 				hitPoints.forEach(point => {
 					drawF.circle(point, 5);
@@ -34,7 +36,7 @@
 class Player extends RigidCirc{
 	constructor() {
 		//super(new Coord(105, 105), 0, 100, 100); //rect
-		super(new Coord(105, 105), 0, 50, 50); //circ
+		super(new Coord(400, 105), 0, 50, 50); //circ
 	}
 	draw() {
 		this.showHitbox();
@@ -72,6 +74,5 @@ class Circ extends RigidCirc {
 }
 let game = new Game(new Player());
 game.addObj(new Rect());
-game.addObj(new Circ());
-animate(game); */
-
+//game.addObj(new Circ());
+animate(game);
